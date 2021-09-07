@@ -1,0 +1,175 @@
+	### ALUR MEMBUAT APLIKASI WEB DENGAN SPRING ###
+	
+1. Membuat project di start.spring.io
+	- Tambahkan dependency yang diperlukan
+		- Sping Web
+        - DBMS (mysql / postgresql)
+        - Flyaway Migration
+        - Spring Data JPA
+        - Lombok
+        - Thymleaf
+        - Validation
+        
+2. Setup database (MSQL / POSTGRESQL)
+	- Menggunakan Docker
+		...
+		docker run --rm\
+		  --name invoice-db\
+		  -e POSTGRES_DB=invoicedb\
+		  -e POSTGRES_USER=invoice\
+		  -e POSTGRES_PASSWORD=L5eACAebPZzrYbRZdUfm\
+		  -e PGDATA=/var/lib/postgresql/data/pgdata\
+		  -v "$PWD/invoicedb:/var/lib/postgresql/data"\
+		  -p 5432:5432\
+		postgres:13
+		...
+		
+	- Akses melalui terminal dengan perintah 
+		$ sudo docker exec -ti nama_container bash
+		$ psql -h localhost -U username nama_database
+		$ \t  (show tables)
+	
+3. Buat konfigurasi di src/main/java/recources/application.properties
+	- Konfigurasi untuk database
+		...
+		spring.datasource.url=jdbc:postgresql://localhost/invoicedb
+		spring.datasource.username=invoice
+		spring.datasource.password=L5eACAebPZzrYbRZdUfm
+		...
+	- Konfigurasi untuk spring-data-jpa
+		...
+		spring.jpa.hibernate.ddl-auto=validate
+		spring.jpa.show-sql=true
+		spring.jpa.properties.hibernate.format_sql=true
+		...
+		
+4. Membuat database migration
+	- membuat file sql dengan nama V1.0.0.YYYYmmDD01__Skema_Awal.sql
+	- Isi dengan perintah sql (Tidak harus lengkap, karena hanya untuk mengetahui apakah koneksi ke database sudah sukes atau belum)
+		...
+		CREATE TABLE payment_provider (
+		id VARCHAR (36),
+		PRIMARY KEY (id)
+		);
+
+		CREATE TABLE invoice_type (
+		id VARCHAR (36),
+		PRIMARY KEY (id)
+		);
+		
+		CREATE TABLE invoice (
+		id VARCHAR (36),
+		PRIMARY KEY (id)
+		);
+		
+		CREATE TABLE virtual_account (
+		id VARCHAR (36),
+		PRIMARY KEY (id)
+		);
+		
+		CREATE TABLE payment (
+		id VARCHAR (36),
+		PRIMARY KEY (id)
+		);
+    	....
+    	
+ 5. Jalankan project dengan perintah $ mvn clean spring-boot:run (Cek apakah database migration berhasil)
+ 
+ 6. Buat Entity Class Mapping.
+ 	a. Buat class Base Entity yang berisi field yang pasti ada di semua entity (implementasikan audit rail)
+ 		...
+ 		@MappedSuperclass
+		@Data
+		public class BaseEntity {
+
+			@Id
+			@GeneratedValue(generator = "system-uuid")
+			@GenericGenerator(name = "system-uuid", strategy = "uuid2")
+			private String id;
+
+			@CreatedBy
+			private String createdBy;
+
+			@LastModifiedBy
+			private String updatedBy;
+
+			@CreatedDate
+			private LocalDateTime created;
+
+			@LastModifiedDate
+			private LocalDateTime updated;
+
+			@NotNull
+			@Enumerated(EnumType.STRING)
+			private StatusRecord statusRecord = StatusRecord.ACTIVE;
+		}
+		...
+		
+	b. Buat masing masing entity class sesuai dengan bussines meaning (Tambahkan annotation @Entity, @Data,.., dan implementasikan soft delete)
+		...
+		@Entity @Data
+		@SQLDelete(sql = "UPDATE invoice SET status_record = 'INACTIVE' WHERE id=?")
+		@Where(clause = "status_record='ACTIVE'")
+		public class Invoice extends BaseEntity{
+
+			@NotNull
+			@ManyToOne @JoinColumn(name = "id_invoice_type")
+			private InvoiceType invoiceType;
+
+			@NotNull @NotEmpty @Size(min = 3, max = 100)
+			private String invoiceNumber;
+
+			@NotNull
+			private boolean isPaid =  false;
+
+			@NotNull
+			private LocalDateTime dueDate;
+
+			@NotNull @NotEmpty @Size(min = 3, max = 255)
+			private String description;
+
+			@NotNull @Min(0)
+			private BigDecimal amount;
+		}
+		...
+		
+	c. ubah konfigurasi spring.jpa.hibernate.ddl-auto=validate menjadi update agar spring data JPA membuatkan tabel pada setiap entity class sesuai dengan ketentuan yang sudah ditentukan.
+	
+	d. hapus database yang sebelumnya sudah dibuat, kemudian jalankan project lagi.
+	e. masuk ke database dengan pg_dump kemudian salin semua perintah sql yang digenerate dengan memperhatikan relasi antar tabel.
+	f. hapus database yang sebelumnya dibuat.
+	f. ubah konfigurasi spring.jpa.hibernate.ddl-auto=update menjadi validate, kemudian jalankan project.
+	
+	g. Membuat relasi many to many dengan code : ############# PENTING #################
+		- 1. Mendeklarasikan annotation dan variabel pada class	
+			...
+			@ManyToMany 
+			@JoinTable ( 
+				name = "invoice_type_provider", 
+				joinColumns = @JoinColumn(name="id_invoice_type"), 
+				inverseJoinColumns = @JoinColumn(name="id_payment_provider")
+			)
+			private Set<PaymentProvider> paymentProviders = new HashSet<>();
+			...
+		
+		- 2. Menambah tabel pada db migration
+			...
+			create table invoice_type_provider (
+				id_invoice_type character varying(36) not null,
+				id_payment_provider character variying(36) not null
+			);
+			
+			ALTER TABLE ONLY invoice_type_provider
+   				ADD CONSTRAINT invoice_type_provider_pkey PRIMARY KEY (id_invoice_type, id_payment_provider);
+   				
+   			ALTER TABLE ONLY invoice_type_provider
+    			ADD CONSTRAINT fk_invoice_type_provider_type FOREIGN KEY (id_invoice_type) REFERENCES invoice_type(id);
+    			
+    		ALTER TABLE ONLY invoice_type_provider
+    			ADD CONSTRAINT fk_invoice_type_provider_provider FOREIGN KEY (id_payment_provider) REFERENCES payment_provider(id);
+
+			...
+			
+	h. reset database dan restart project.
+	
+7. 

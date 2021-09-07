@@ -40,14 +40,14 @@ antara lain :
    *tag image jangan pake default(latest)
     * -v volume mapping simpan ke directory project, tapi tidak usah diupload ke repository
 ...   
-$ docker run --rm \
-      --name invoice-db \
-      -e POSTGRES_DB=invoicedb \
-      -e POSTGRES_USER=invoice \
-      -e POSTGRES_PASSWORD=L5eACAebPZzrYbRZdUfm \
-      -e PGDATA=/var/lib/postgresql/data/pgdata \
-      -v "f:/JavaProjects/belajarJavaWeb/invoiceManagement/invoicedb:/var/lib/postgresql/data" \
-      -p 5432:5432 \
+$ docker run --rm\
+      --name invoice-db\
+      -e POSTGRES_DB=invoicedb\
+      -e POSTGRES_USER=invoice\
+      -e POSTGRES_PASSWORD=L5eACAebPZzrYbRZdUfm\
+      -e PGDATA=/var/lib/postgresql/data/pgdata\
+      -v "$PWD/invoicedb:/var/lib/postgresql/data"\
+      -p 5432:5432\
     postgres:13
 
 for Windows Command promt:
