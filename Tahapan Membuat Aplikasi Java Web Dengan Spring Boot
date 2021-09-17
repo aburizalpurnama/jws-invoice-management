@@ -172,4 +172,123 @@
 			
 	h. reset database dan restart project.
 	
-7. 
+=============>> MENAMBAHKAN SKEMA DATABASE <<=============
+
+	-> Membuat entity class yang berisi semua field yang diperlukan dengan mengimplementasi soft delete, dan semua spring annotation
+		...
+		@Entity @Data
+		@SQLDelete(sql = "UPDATE customer SET status_record = 'INACTIVE' WHERE id=?")
+		@Where(clause = "status_record='ACTIVE'")
+		public class Customer extends BaseEntity{
+
+			@NotNull @NotEmpty @Size(max = 100)
+			private String code;
+
+			@NotNull @NotEmpty @Size(max = 255)
+			private String name;
+
+			@NotNull @NotEmpty @Size(max = 100)
+			@Email
+			private String email;
+
+			@NotNull @NotEmpty @Size(max = 30)
+			private String mobilePhone;
+		}
+		...
+		
+	-> Melakukan tambahan skema database di dbmigration. dapat diketik manual, atau bisa juga digenerate menggunakan JPA
+		...
+		CREATE TABLE customer (
+			id character varying(36) NOT NULL,
+			created timestamp without time zone,
+			created_by character varying(255),
+			status_record character varying(255) NOT NULL,
+			updated timestamp without time zone,
+			updated_by character varying(255),
+			code character varying(100) NOT NULL,
+			name character varying(255) NOT NULL,
+			email character varying(100) NOT NULL,
+			mobile_phone character varying(30) NOT NULL
+		);
+
+		ALTER TABLE ONLY customer
+			ADD CONSTRAINT customer_pkey PRIMARY KEY (id);
+		...
+		
+	-> Menambahkan relasi dari tabel baru ke tabel lama (jika ada)
+	
+	-> reset database dan restart program, untuk memastikan skema database yang baru sudah sesuai dengan mapping hibernate.
+	
+	
+===============>> MENGIMPLEMENTASI RUNNING NUMBER (AUTO INCREMENT) PADA SALAH SATU FIELD <<========================
+
+	-> Membuat class RunningNumber
+		...
+		public class RunningNumber {
+
+			@Id
+			@GeneratedValue(generator = "system-uuid")
+			@GenericGenerator(name="system-uuid", strategy = "uuid2")
+			private String id;
+
+			@NotNull @NotEmpty @Size(min = 3, max = 100)
+			private String prefix;
+
+			@NotNull @Min(0)
+			private Long lastNumber = 0l;
+		}
+		...
+		
+	-> Menambahkan tabel running number di skema database
+		...
+		CREATE TABLE running_number (
+			id character varying(36) NOT NULL,
+			prefix character varying(100) NOT NULL,
+			last_number bigint NOT NULL
+		);
+
+		ALTER TABLE ONLY running_number
+			ADD CONSTRAINT running_number_pkey PRIMARY KEY (id);
+		...
+		
+	-> Membuat Interface RunningNumberDao
+		...
+		public interface RunningNumberDao extends CrudRepository<RunningNumber, String> {
+			public RunningNumber findByPrefix(String prefix);
+		}
+		...
+		
+	-> Membuat RunningNumberService
+		...
+		@Service @Transactional
+		public class RunningNumberService {
+			
+			@Autowired
+			private RunningNumberDao runningNumberDao;
+			
+			public Long getNumber(String prefix){
+				RunningNumber rn = runningNumberDao.findByPrefix(prefix);
+				if (rn == null){
+				    rn = new RunningNumber();
+				    rn.setPrefix(prefix);
+				}
+				
+				rn.setLastNumber(rn.getLastNumber() + 1);
+				runningNumberDao.save(rn);
+				
+				return rn.getLastNumber();
+			}
+		}
+		...
+		
+	-> Membuat testing untuk RunningNumberService
+		..
+		
+	
+	
+	
+=== NOTE === NOTE === NOTE === NOTE === NOTE === NOTE === NOTE === NOTE === NOTE === NOTE === NOTE === NOTE === NOTE === NOTE === NOTE ===
+NOTE === NOTE === NOTE === NOTE === NOTE === NOTE === NOTE === NOTE === NOTE === NOTE === NOTE === NOTE === NOTE === NOTE === NOTE ===
+=== NOTE === NOTE === NOTE === NOTE === NOTE === NOTE === NOTE === NOTE === NOTE === NOTE === NOTE === NOTE === NOTE === NOTE === NOTE ===
+
+	-> Mengimplementasi konsep base entity hanya diperuntukkan untuk table yang menerapkan fitur auditing.

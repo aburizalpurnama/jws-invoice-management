@@ -18,6 +18,9 @@ import java.time.LocalDateTime;
 @SQLDelete(sql = "UPDATE invoice SET status_record = 'INACTIVE' WHERE id=?")
 @Where(clause = "status_record='ACTIVE'")
 public class Invoice extends BaseEntity{
+    @NotNull
+    @ManyToOne @JoinColumn(name = "id_customer")
+    private Customer customer;
 
     @NotNull
     @ManyToOne @JoinColumn(name = "id_invoice_type")
@@ -37,4 +40,9 @@ public class Invoice extends BaseEntity{
 
     @NotNull @Min(0)
     private BigDecimal amount;
+
+    @NotNull @Min(0)
+    private BigDecimal totalPayment;
+
+    private PaymentStatus paymentStatus;
 }

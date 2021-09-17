@@ -25,6 +25,9 @@ public class InvoiceType extends BaseEntity{
     @NotNull @NotEmpty @Size(min =  3, max = 100)
     private String name;
 
+    @NotNull @NotEmpty
+    private PaymentType paymentType;
+
     @ManyToMany
     @JoinTable(
             name = "invoice_type_provider",
@@ -32,4 +35,12 @@ public class InvoiceType extends BaseEntity{
             inverseJoinColumns = @JoinColumn(name="id_payment_provider")
     )
     private Set<PaymentProvider> paymentProviders = new HashSet<>();
+
+    @ManyToMany
+    @JoinTable(
+            name = "invoice_type_configuration",
+            joinColumns = @JoinColumn(name = "id_invoice_type"),
+            inverseJoinColumns = @JoinColumn(name = "id_virtual_account_configuration")
+    )
+    private Set<VirtualAccountConfiguration> virtualAccountConfigurations = new HashSet<>();
 }
