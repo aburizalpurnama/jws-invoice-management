@@ -39,10 +39,7 @@ public class VirtualAccountConfiguration extends BaseEntity{
     private BigDecimal transaction_fee_flat;
 
     @NotNull @Min(0)
-    private BigDecimal amount;
-
-    @NotNull @Min(0)
-    private double transcation_fee_presentage;
+    private double transaction_fee_persentage;
 
     @NotNull @NotEmpty @Size(min =  3, max = 3)
     private String company_prefix;

@@ -6,7 +6,8 @@ CREATE TABLE public.bank (
     updated timestamp without time zone,
     updated_by character varying(255),
     code character varying(100) NOT NULL,
-    name character varying(100) NOT NULL
+    name character varying(100) NOT NULL,
+    central_bank_code character varying(5) NOT NULL
 );
 
 ALTER TABLE ONLY public.bank
@@ -56,7 +57,7 @@ CREATE TABLE public.invoice_type (
     updated_by character varying(255),
     code character varying(100) NOT NULL,
     name character varying(100) NOT NULL,
-    payment_type integer NOT NULL
+    payment_type  character varying(100)
 );
 
 ALTER TABLE ONLY public.invoice_type
@@ -114,18 +115,16 @@ CREATE TABLE public.virtual_account_configuration (
     updated timestamp without time zone,
     updated_by character varying(255),
     account_number_length integer NOT NULL,
-    amount numeric(19,2) NOT NULL,
     code character varying(100) NOT NULL,
     company_prefix character varying(3) NOT NULL,
     name character varying(100) NOT NULL,
     transaction_fee_flat numeric(19,2) NOT NULL,
-    transcation_fee_presentage double precision NOT NULL,
+    transaction_fee_persentage double precision NOT NULL,
     id_bank_account character varying(255) NOT NULL,
     id_payment_provider character varying(255) NOT NULL,
     CONSTRAINT virtual_account_configuration_account_number_length_check CHECK ((account_number_length >= 10)),
-    CONSTRAINT virtual_account_configuration_amount_check CHECK ((amount >= (0)::numeric)),
     CONSTRAINT virtual_account_configuration_transaction_fee_flat_check CHECK ((transaction_fee_flat >= (0)::numeric)),
-    CONSTRAINT virtual_account_configuration_transcation_fee_presentage_check CHECK ((transcation_fee_presentage >= (0)::double precision))
+    CONSTRAINT virtual_account_configuration_transaction_fee_persentage_check CHECK ((transaction_fee_persentage >= (0)::double precision))
 );
 
 ALTER TABLE ONLY public.virtual_account_configuration
@@ -218,5 +217,3 @@ CREATE TABLE public.running_number (
 
 ALTER TABLE ONLY public.running_number
     ADD CONSTRAINT running_number_pkey PRIMARY KEY (id);
-
-
