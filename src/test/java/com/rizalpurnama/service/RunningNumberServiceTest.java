@@ -62,17 +62,4 @@ public class RunningNumberServiceTest {
         }
     }
 
-//    @Test
-//    public void testMultiThread() throws InterruptedException {
-//        int jumlahTread = 10;
-//        for (int i = 0; i < jumlahTread; i++) {
-//            Long x = new Long(i);
-//            Thread t = new Thread(() -> {
-//                Long hasil = runningNumberService.getNumber("test");
-//                System.out.println("Thread ["+ x +"] : " + hasil);
-//            });
-//            t.start();
-//        }
-//        Thread.sleep(10 * 1000);
-//    }
 }

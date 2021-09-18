@@ -30,4 +30,9 @@ public class VirtualAccount extends BaseEntity{
 
     @NotNull @Enumerated(EnumType.STRING)
     private VirtualAccountType virtualAccountType = VirtualAccountType.CLOSED;
+
+
+    @NotNull
+    @ManyToOne @JoinColumn(name = "id_va_config")
+    private VirtualAccountConfiguration virtualAccountConfiguration;
 }

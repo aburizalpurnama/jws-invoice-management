@@ -1,5 +1,6 @@
 package com.rizalpurnama.controller;
 
+import com.rizalpurnama.exception.PaymentExceedInvoiceAmountException;
 import com.rizalpurnama.exception.VirtualAccountAlreadyPaidException;
 import com.rizalpurnama.exception.VirtualAccountNotFoundException;
 import com.rizalpurnama.service.PaymentService;
@@ -17,7 +18,7 @@ public class PaymentController {
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public void pay() throws VirtualAccountAlreadyPaidException, VirtualAccountNotFoundException {
+    public void pay() throws VirtualAccountAlreadyPaidException, VirtualAccountNotFoundException, PaymentExceedInvoiceAmountException {
         paymentService.pay(null,
                 null,
                 null,

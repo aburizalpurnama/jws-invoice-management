@@ -86,3 +86,4 @@ values ('c003', 'CUST-003', 'Customer 003', 'c003@mail.com', '09899929919', 'ACT
 
 insert into customer (id, code, name, email, mobile_phone, status_record, created, created_by, updated, updated_by)
 values ('c004', 'CUST-004', 'Customer 004', 'c004@mail.com', '09899929919', 'ACTIVE', '2021-09-08T11:28:38.426199', 'test-user', '2021-09-08T11:48:38.426199', 'test-user');
+

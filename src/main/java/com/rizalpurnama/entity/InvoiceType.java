@@ -24,7 +24,7 @@ public class InvoiceType extends BaseEntity{
 
     @NotNull
     @Enumerated(EnumType.STRING)
-    private PaymentType paymentType;
+    private PaymentType paymentType = PaymentType.OPEN;
 
     @ManyToMany
     @JoinTable(

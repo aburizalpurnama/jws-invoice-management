@@ -4,9 +4,7 @@ import lombok.Data;
 import org.hibernate.annotations.SQLDelete;
 import org.hibernate.annotations.Where;
 
-import javax.persistence.Entity;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
+import javax.persistence.*;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
@@ -27,13 +25,13 @@ public class Invoice extends BaseEntity{
     private InvoiceType invoiceType;
 
     @NotNull @NotEmpty @Size(min = 3, max = 100)
-    private String invoiceNumber;
+    private String invoiceNumber = "0123456";
 
     @NotNull
     private boolean isPaid =  false;
 
     @NotNull
-    private LocalDateTime dueDate;
+    private LocalDateTime dueDate = LocalDateTime.now().plusHours(1);
 
     @NotNull @NotEmpty @Size(min = 3, max = 255)
     private String description;
@@ -42,7 +40,9 @@ public class Invoice extends BaseEntity{
     private BigDecimal amount;
 
     @NotNull @Min(0)
-    private BigDecimal totalPayment;
+    private BigDecimal totalPayment = BigDecimal.valueOf(0.0);
 
-    private PaymentStatus paymentStatus;
+    @NotNull @Enumerated(EnumType.STRING)
+    private PaymentStatus paymentStatus = PaymentStatus.NOT_FULL;
+
 }
