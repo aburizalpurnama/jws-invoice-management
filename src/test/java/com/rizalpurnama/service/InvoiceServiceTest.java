@@ -34,24 +34,20 @@ public class InvoiceServiceTest {
 
         Invoice invoice = invoiceService.createInvoice(customer, registrasi, description, amount);
 
-        VirtualAccountConfiguration config = vaConfigDao.findById("va-bni").get();
-
-        PaymentProvider paymentProvider = paymentProviderDao.findById("bankbni").get();
-
-        VirtualAccount va = new VirtualAccount();
-        va.setInvoice(invoice);
-        va.setAccountNumber("12345");
-        va.setVirtualAccountConfiguration(config);
-        va.setCreated(LocalDateTime.now());
-        va.setCreatedBy("user-test");
-        va.setPaymentProvider(paymentProvider);
-        va.setCompanyId(config.getCompany_prefix());
-        virtualAccountDao.save(va);
-
         Assertions.assertNotNull(invoice);
         Assertions.assertNotNull(invoice.getInvoiceNumber());
 
         System.out.println("Invoice Number : " + invoice.getInvoiceNumber());
+
+        Iterable<VirtualAccount> vaList = virtualAccountDao.findByInvoice(invoice);
+
+        Integer countVa = 0;
+        for (VirtualAccount va : vaList){
+            countVa++;
+            System.out.println("No VA : " + va.getAccountNumber());
+        }
+
+        Assertions.assertTrue(countVa == 2);
 
     }
 }

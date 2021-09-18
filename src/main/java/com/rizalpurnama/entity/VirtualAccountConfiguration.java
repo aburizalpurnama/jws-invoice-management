@@ -36,7 +36,7 @@ public class VirtualAccountConfiguration extends BaseEntity{
     private BankAccount bankAccount;
 
     @NotNull @Min(0)
-    private BigDecimal transaction_fee_flat;
+    private BigDecimal transaction_fee_flat = BigDecimal.ZERO;
 
     @NotNull @Min(0)
     private double transaction_fee_persentage;

@@ -46,7 +46,7 @@ insert into virtual_account_configuration (id, code, name, id_payment_provider, 
 values ('va-gopay', 'VA-GOPAY', 'Pembayaran GoPay', 'bankbca', 'bca001', 0, 0.025, '123', 12, 'ACTIVE', current_timestamp, 'user-test');
 
 insert into virtual_account_configuration (id, code, name, id_payment_provider, id_bank_account, transaction_fee_flat, transaction_fee_persentage, company_prefix, account_number_length, status_record, created, created_by)
-values ('va-bni', 'VA-BNI', 'Pembayaran BNI', 'bankbni', 'bni001', 0, 0.025, '123', 12, 'ACTIVE', current_timestamp, 'user-test');
+values ('va-bni', 'VA-BNI', 'Pembayaran BNI', 'bankbni', 'bni001', 0, 0.025, '235', 12, 'ACTIVE', current_timestamp, 'user-test');
 
 -- invoice type
 

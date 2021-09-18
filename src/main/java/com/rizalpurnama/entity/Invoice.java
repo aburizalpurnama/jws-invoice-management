@@ -31,7 +31,7 @@ public class Invoice extends BaseEntity{
     private boolean isPaid =  false;
 
     @NotNull
-    private LocalDateTime dueDate = LocalDateTime.now().plusHours(1);
+    private LocalDateTime dueDate;
 
     @NotNull @NotEmpty @Size(min = 3, max = 255)
     private String description;
