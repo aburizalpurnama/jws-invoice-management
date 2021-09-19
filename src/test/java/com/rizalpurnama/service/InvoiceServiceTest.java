@@ -23,7 +23,7 @@ public class InvoiceServiceTest {
 
     @Test
     @Sql(scripts = {
-            "classpath:/sql/delete-sample-data-invoice.sql",
+            "classpath:/sql/delete-all-data.sql",
             "classpath:/sql/insert-sample-data-invoice.sql"
     })
     public void createInvoice(){

@@ -1,3 +1,4 @@
+delete from payment;
 delete from virtual_account;
 delete from invoice;
 delete from customer;

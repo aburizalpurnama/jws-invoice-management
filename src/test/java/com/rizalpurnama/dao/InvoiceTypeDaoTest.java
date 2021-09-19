@@ -8,7 +8,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.jdbc.Sql;
 
 @SpringBootTest
-@Sql(scripts = {"/sql/delete-invoice-type.sql", "/sql/insert-inactive-invoice-type.sql"})
+@Sql(scripts = {"/sql/delete-all-data.sql", "/sql/insert-inactive-invoice-type.sql"})
 public class InvoiceTypeDaoTest {
 
     @Autowired
