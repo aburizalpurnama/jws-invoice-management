@@ -1,8 +1,10 @@
 package com.rizalpurnama.service;
 
 import com.rizalpurnama.dao.VirtualAccountConfigurationDao;
+import com.rizalpurnama.dao.VirtualAccountDao;
 import com.rizalpurnama.entity.Payment;
 import com.rizalpurnama.entity.PaymentProvider;
+import com.rizalpurnama.entity.VirtualAccount;
 import com.rizalpurnama.entity.VirtualAccountConfiguration;
 import com.rizalpurnama.exception.PaymentExceedInvoiceAmountException;
 import com.rizalpurnama.exception.VirtualAccountAlreadyPaidException;
@@ -18,6 +20,8 @@ public class PaymentServiceTest {
 
     @Autowired PaymentService paymentService;
     @Autowired VirtualAccountConfigurationDao vaConfigDao;
+    @Autowired VirtualAccountDao virtualAccountDao;
+
 
     @Test
     void testCreatePayment() throws VirtualAccountAlreadyPaidException, PaymentExceedInvoiceAmountException, VirtualAccountNotFoundException {
@@ -25,7 +29,7 @@ public class PaymentServiceTest {
 
         paymentService.pay(config.getPaymentProvider(),
                 config.getCompany_prefix(),
-                "12345",
+                "23509899929919",
                 new BigDecimal(123000.98),
                 "Test Make a Payment");
     }

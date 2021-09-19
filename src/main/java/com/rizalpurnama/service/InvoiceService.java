@@ -44,7 +44,7 @@ public class InvoiceService {
             VirtualAccount va = new VirtualAccount();
             va.setVirtualAccountConfiguration(vaConfig);
             va.setInvoice(invoice);
-            va.setCompanyId(vaConfig.getCompany_prefix() + vaConfig.getName());
+            va.setCompanyId(vaConfig.getCompany_prefix());
             va.setPaymentProvider(vaConfig.getPaymentProvider());
             va.setAccountNumber(vaConfig.getCompany_prefix() + invoice.getCustomer().getMobilePhone());
             virtualAccountDao.save(va);

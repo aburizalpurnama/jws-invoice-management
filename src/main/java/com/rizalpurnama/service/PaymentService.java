@@ -1,6 +1,7 @@
 package com.rizalpurnama.service;
 
 import com.rizalpurnama.dao.InvoiceDao;
+import com.rizalpurnama.dao.PaymentDao;
 import com.rizalpurnama.dao.VirtualAccountDao;
 import com.rizalpurnama.entity.*;
 import com.rizalpurnama.exception.PaymentExceedInvoiceAmountException;
@@ -12,14 +13,15 @@ import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
 import java.math.BigDecimal;
+import java.time.LocalDateTime;
 
 @Service
 public class PaymentService {
 
     @Autowired VirtualAccountDao virtualAccountDao;
-    @Autowired
-    ActivityLogService auditLogService;
+    @Autowired ActivityLogService auditLogService;
     @Autowired InvoiceDao invoiceDao;
+    @Autowired PaymentDao paymentDao;
 
     @Transactional(
             rollbackOn = {
@@ -48,16 +50,26 @@ public class PaymentService {
         va.setStatusRecord(StatusRecord.INACTIVE);
 
         // 5. update status invoice menjadi lunas
+        updateInvoicePaymentStatus(amount, va);
+
+        // 6. insert ke tabel payment
+        Payment payment = new Payment();
+        payment.setAmount(amount);
+        payment.setProviderReference(reference);
+        payment.setTransactionTime(LocalDateTime.now());
+        payment.setVirtualAccount(va);
+        paymentDao.save(payment);
+        // 7. notifikasi (next phase)
+
+//        throw new VirtualAccountNotFoundException();
+    }
+
+    private void updateInvoicePaymentStatus(BigDecimal amount, VirtualAccount va) {
         Invoice invoice = va.getInvoice();
         invoice.setTotalPayment(invoice.getTotalPayment().add(amount));
         invoice.setPaid(true);
         invoice.setPaymentStatus(PaymentStatus.FULL);
         invoiceDao.save(invoice);
-
-        // 6. insert ke tabel payment
-        // 7. notifikasi (next phase)
-
-//        throw new VirtualAccountNotFoundException();
     }
 
     private void checkIsPaymentAmountExceedInvoice(BigDecimal amount, VirtualAccount va) throws PaymentExceedInvoiceAmountException {
