@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html
+        lang="en" xmlns:th="http://www.w3.org/1999/xhtml"
+        xmlns:sec="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="UTF-8">
+    <title>Aplikasi Invoice</title>
+</head>
+<body>
+    <h1>This Is Home Page of Aplikasi Invoice..</h1>
+
+    <h2>Welcome, <span sec:authentication="name">username</span></h2>
+
+    <ul>
+        <li sec:authorize="hasAuthority('VIEW_TRANSAKSI')">View Transaksi</li>
+        <li sec:authorize="hasAuthority('EDIT_TRANSAKSI')">Edit Transaksi</li>
+    </ul>
+
+    Daftar Permisson :
+    <ul>
+        <li th:each="perm : ${#authentication.authorities}" th:text="${perm}">Permission</li>
+    </ul>
+
+    <form method="post" th:action="@{/logout}">
+        <input type="submit" value="Logout">
+    </form>
+</body>
+</html>
