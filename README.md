@@ -40,15 +40,30 @@ antara lain :
    *tag image jangan pake default(latest)
     * -v volume mapping simpan ke directory project, tapi tidak usah diupload ke repository
 ...   
-$ docker run --rm\
-      --name invoice-db\
-      -e POSTGRES_DB=invoicedb\
-      -e POSTGRES_USER=invoice\
-      -e POSTGRES_PASSWORD=L5eACAebPZzrYbRZdUfm\
-      -e PGDATA=/var/lib/postgresql/data/pgdata\
-      -v "$PWD/invoicedb:/var/lib/postgresql/data"\
-      -p 5432:5432\
-    postgres:13
+>> POSTGRESQL
+
+	$ docker run --rm\
+		  --name invoice-db\
+		  -e POSTGRES_DB=invoicedb\
+		  -e POSTGRES_USER=invoice\
+		  -e POSTGRES_PASSWORD=L5eACAebPZzrYbRZdUfm\
+		  -e PGDATA=/var/lib/postgresql/data/pgdata\
+		  -v "$PWD/invoicedb:/var/lib/postgresql/data"\
+		  -p 5432:5432\
+		postgres:13
+
+>> mysql
+
+	$ docker run --rm --name invoice-db\
+		-e MYSQL_DATABASE=invoicedb\
+		-e MYSQL_USER=invoice\
+		-e MYSQL_PASSWORD=L5eACAebPZzrYbRZdUfm\
+		-e MYSQL_ROOT_PASSWORD=L5eACAebPZzrYbRZdUfm\
+		-v "$PWD/invoicedb:/var/lib/mysql"\
+		-p 3306:3306\
+		mysql:8.0
+    
+    
 
 for Windows Command promt:
 
