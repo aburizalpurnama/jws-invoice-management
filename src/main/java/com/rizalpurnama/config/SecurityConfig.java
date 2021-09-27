@@ -13,6 +13,7 @@ import org.springframework.security.config.annotation.method.configuration.Enabl
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
+import org.springframework.security.config.annotation.web.configurers.oauth2.server.resource.OAuth2ResourceServerConfigurer;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -81,8 +82,18 @@ public class SecurityConfig {
         return provider;
     }
 
-    @Bean
-    SecurityFilterChain defaultSecurityFilterChain(HttpSecurity http) throws Exception {
+    @Bean @Order(1)
+    SecurityFilterChain apiSecurityFilterChain(HttpSecurity http) throws Exception {
+        http.antMatcher("/api/**")
+                .authorizeRequests(authorizeRequests -> {
+                            authorizeRequests.anyRequest().authenticated();
+                        }
+                ).oauth2ResourceServer(OAuth2ResourceServerConfigurer::jwt);
+        return http.build();
+    }
+
+    @Bean @Order(2)
+    SecurityFilterChain htmlSecurityFilterChain(HttpSecurity http) throws Exception {
         http.authorizeRequests(authorizeRequests ->
                         authorizeRequests.anyRequest().authenticated()
                 )
