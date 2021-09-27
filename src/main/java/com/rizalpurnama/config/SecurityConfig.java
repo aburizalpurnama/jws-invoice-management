@@ -1,9 +1,12 @@
 package com.rizalpurnama.config;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.AutoConfigureOrder;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.core.Ordered;
 import org.springframework.core.annotation.Order;
+import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
@@ -14,12 +17,15 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.provisioning.JdbcUserDetailsManager;
+import org.springframework.security.web.SecurityFilterChain;
 
 import javax.sql.DataSource;
 
+import static org.springframework.security.config.Customizer.withDefaults;
+
 @EnableWebSecurity
 @EnableGlobalMethodSecurity(prePostEnabled = true)
-public class SecurityConfig extends WebSecurityConfigurerAdapter {
+public class SecurityConfig {
 
     // query untuk mendapatkan password dari username yang diinputkan
     private static final String SQL_LOGIN
@@ -52,7 +58,6 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
     //method untuk mendapatkan objek yang berisi username, password, beserta permission dari database.
     //menggunakan instance dari JdbcUserDetailManager
-    @Override
     @Bean
     public UserDetailsService userDetailsService() {
         JdbcUserDetailsManager manager = new JdbcUserDetailsManager(this.dataSource);
@@ -60,13 +65,29 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         manager.setAuthoritiesByUsernameQuery(SQL_PERMISSION);
         return manager;
     }
+//
+//    //Mengkonfigurasi userdetail servis dan encoder yang sudah diatas,
+//    //sehingga spring dapat mengerjakan pengamanan sesuai dengan yang kita inginkan
+//    protected void configure(AuthenticationManagerBuilder auth) throws Exception {
+//        auth.userDetailsService(userDetailsService())
+//                .passwordEncoder(passwordEncoder());
+//    }
 
-    //Mengkonfigurasi userdetail servis dan encoder yang sudah diatas,
-    //sehingga spring dapat mengerjakan pengamanan sesuai dengan yang kita inginkan
-    @Override
-    protected void configure(AuthenticationManagerBuilder auth) throws Exception {
-        auth.userDetailsService(userDetailsService())
-                .passwordEncoder(passwordEncoder());
+    @Bean
+    DaoAuthenticationProvider authenticationProvider() {
+        DaoAuthenticationProvider provider = new DaoAuthenticationProvider();
+        provider.setPasswordEncoder(passwordEncoder());
+        provider.setUserDetailsService(userDetailsService());
+        return provider;
+    }
+
+    @Bean
+    SecurityFilterChain defaultSecurityFilterChain(HttpSecurity http) throws Exception {
+        http.authorizeRequests(authorizeRequests ->
+                        authorizeRequests.anyRequest().authenticated()
+                )
+                .formLogin(withDefaults());
+        return http.build();
     }
 
     // Membuat multiple security configuration
@@ -78,29 +99,31 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
      *  -> tidak perlu mengaktifkan csrf filter, karena ini tidak diakses lewat browser.
      *  -> letakkan url di antMatcher().
      */
-    @Configuration @Order(1)
-    static class ApiSecurityConfig extends WebSecurityConfigurerAdapter{
-        @Override
-        protected void configure(HttpSecurity http) throws Exception {
-            http.antMatcher("/api/**")
-                    .authorizeRequests()
-                    .anyRequest()
-                    .permitAll()
-                    .and().csrf().disable();
-        }
-    }
+//    @Configuration @Order(1)
+//    static class ApiSecurityConfig extends WebSecurityConfigurerAdapter{
+//        @Override
+//        protected void configure(HttpSecurity http) throws Exception {
+//            http.antMatcher("/api/**")
+//                    .authorizeRequests()
+//                    .anyRequest()
+//                    .permitAll()
+//                    .and().csrf().disable();
+//        }
+//    }
+//
+//    // Membuat security configuration untuk url yang diakses dengan browser
+//    // harus menentukan konfigurasi form login dan logout.
+//    @Configuration @Order(2)
+//    static class HtmlSecurityConfig extends WebSecurityConfigurerAdapter{
+//        @Override
+//        protected void configure(HttpSecurity http) throws Exception {
+//            http.authorizeRequests()
+//                    .anyRequest()
+//                    .fullyAuthenticated()
+//                    .and().formLogin(Customizer.withDefaults())
+//                    .logout(Customizer.withDefaults());
+//        }
+//    }
 
-    // Membuat security configuration untuk url yang diakses dengan browser
-    // harus menentukan konfigurasi form login dan logout.
-    @Configuration @Order(2)
-    static class HtmlSecurityConfig extends WebSecurityConfigurerAdapter{
-        @Override
-        protected void configure(HttpSecurity http) throws Exception {
-            http.authorizeRequests()
-                    .anyRequest()
-                    .fullyAuthenticated()
-                    .and().formLogin(Customizer.withDefaults())
-                    .logout(Customizer.withDefaults());
-        }
-    }
+
 }
