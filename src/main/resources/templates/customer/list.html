@@ -31,7 +31,7 @@
             <td th:text="${c.email}">c01@email.com</td>
             <td th:text="${c.mobilePhone}">+62123456789</td>
             <td>
-                <a href="@{/form(id=$c.id)}">edit</a>
+                <a th:href="@{/customer/form(id=${c.id})}">edit</a>
             </td>
         </tr>
         </tbody>

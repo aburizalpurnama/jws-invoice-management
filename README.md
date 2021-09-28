@@ -14,6 +14,49 @@ antara lain :
 
     * QR payment
         - QRIS
+        
+### FITUR APLIKASI ###
+
+	>>> Sebagai Merchant <<<
+
+	* Registrasi
+	* Update Data
+		- nama
+		- logo
+		- email
+		- hp
+		- ktp
+		- npwp
+		- callback url
+	* Reset password
+	* Mengelola payment provider
+		- Company id
+		- API Key / Secret
+		- Metode integrasi (REST API, SOAP API, ISO-8583)
+		- URL payment provider
+		- Daftar alamat IP server payment provider
+	* Rekap Tagihan
+	* History pembayaran
+	* Management Invoice
+		- Membuat invoice
+		- Mengganti nilai dan tanggal jatuh tempo
+		- Membatalkan invoice
+		- Mengganti payment provider
+		
+	>>> Sebagai payment Gateway <<<
+
+>> Helpdesk <<
+	* Cari tagihan
+	* Cari pembayaran
+	* Kirim ulang notifikasi pembbayaran ke merchant
+	* Cek status tagihan di payment provider
+	
+>> Developer
+	* Membuat VA dari invoice
+	* mensimulasikan payment notif dari bank
+	
+		
+	
 
 
 1. Membuat repository di github / gitlab

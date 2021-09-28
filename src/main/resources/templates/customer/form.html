@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultaq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout.html}" xmlns:sd="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="UTF-8">
+    <title>Edit Data Customer</title>
+</head>
+<body>
+<section layout:fragment="content">
+
+    <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+        <h1 class="h2">Edit Data Customer</h1>
+    </div>
+
+    <form method="post"
+          th:action="@{/customer/form}"
+          th:object="${customer}" >
+
+        <input type="hidden" th:field="*{id}">
+
+        <div class="row mb-3">
+            <label for="inputCode" class="col-sm-2 col-form-label">Code</label>
+            <div class="col-sm-5">
+                <input type="text"
+                       th:field="*{code}"
+                       class="form-control "
+                       th:errorclass="is-invalid"
+                       id="inputCode">
+            </div>
+            <div th:if="${#fields.hasErrors('code')}"
+                 th:errors="*{code}"
+                 class="col-sm-5">
+                 Code tidak boleh kosong.
+            </div>
+        </div>
+
+        <div class="row mb-3">
+            <label for="inputName" class="col-sm-2 col-form-label">Name</label>
+            <div class="col-sm-5">
+                <input type="text"
+                       th:field="*{name}"
+                       class="form-control "
+                       th:errorclass="is-invalid"
+                       id="inputName">
+            </div>
+            <div th:if="${#fields.hasErrors('name')}"
+                 th:errors="*{name}"
+                 class="col-sm-5">
+                Nama tidak boleh kosong.
+            </div>
+        </div>
+
+        <div class="row mb-3">
+            <label for="inputEmail" class="col-sm-2 col-form-label">Email</label>
+            <div class="col-sm-5">
+                <input type="email"
+                       th:field="*{email}"
+                       class="form-control "
+                       th:errorclass="is-invalid"
+                       id="inputEmail">
+            </div>
+            <div th:if="${#fields.hasErrors('email')}"
+                 th:errors="*{email}"
+                 class="col-sm-5">
+                Email tidak boleh kosong.
+            </div>
+        </div>
+
+        <div class="row mb-3">
+            <label for="inputPhone" class="col-sm-2 col-form-label">Mobile Phone</label>
+            <div class="col-sm-5">
+                <input type="text"
+                       th:field="*{mobilePhone}"
+                       class="form-control "
+                       th:errorclass="is-invalid"
+                       id="inputPhone">
+            </div>
+            <div th:if="${#fields.hasErrors('mobilePhone')}"
+                 th:errors="*{mobilePhone}"
+                 class="col-sm-5">
+                Mobile phone tidak boleh kosong.
+            </div>
+        </div>
+
+        <button type="submit" class="btn btn-primary">Save Change</button>
+    </form>
+</section>
+</body>
+</html>
