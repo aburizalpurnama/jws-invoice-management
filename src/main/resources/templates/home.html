@@ -1,28 +1,34 @@
 <!DOCTYPE html>
 <html
-        lang="en" xmlns:th="http://www.w3.org/1999/xhtml"
-        xmlns:sec="http://www.w3.org/1999/xhtml">
+        lang="en"
+        xmlns:th="http://www.thymeleaf.org"
+        xmlns:sec="http://thymeleaf.org/extras/spring-security"
+        xmlns:layout="http://www.ultaq.net.nz/thymeleaf/layout"
+        layout:decorate="~{layout.html}">
 <head>
     <meta charset="UTF-8">
     <title>Aplikasi Invoice</title>
 </head>
 <body>
-    <h1>This Is Home Page of Aplikasi Invoice..</h1>
+    <section layout:fragment="content">
+        <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+            <h1 class="h2">Dashboard</h1>
+        </div>
 
-    <h2>Welcome, <span sec:authentication="name">username</span></h2>
+        <h2>Welcome, <span sec:authentication="name">username</span></h2>
 
-    <ul>
-        <li sec:authorize="hasAuthority('VIEW_TRANSAKSI')">View Transaksi</li>
-        <li sec:authorize="hasAuthority('EDIT_TRANSAKSI')">Edit Transaksi</li>
-    </ul>
+        <ul>
+            <li sec:authorize="hasAuthority('VIEW_TRANSAKSI')">View Transaksi</li>
+            <li sec:authorize="hasAuthority('EDIT_TRANSAKSI')">Edit Transaksi</li>
+        </ul>
 
-    Daftar Permisson :
-    <ul>
-        <li th:each="perm : ${#authentication.authorities}" th:text="${perm}">Permission</li>
-    </ul>
+        Daftar Permisson :
+        <ul>
+            <li th:each="perm : ${#authentication.authorities}" th:text="${perm}">Permission</li>
+        </ul>
+    </section>
 
-    <form method="post" th:action="@{/logout}">
-        <input type="submit" value="Logout">
-    </form>
+
+
 </body>
 </html>
