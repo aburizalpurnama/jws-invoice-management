@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="en"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultaq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout.html}" xmlns:sd="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="UTF-8">
+    <title>Merchant Info Form</title>
+</head>
+<body>
+<section layout:fragment="content">
+
+    <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+        <h1 class="h2">Merchant Info</h1>
+    </div>
+
+    <form th:action="@{/merchant/info/form}" method="post">
+        <input type="submit" value="Save">
+    </form>
+
+</section>
+</body>
+</html>
