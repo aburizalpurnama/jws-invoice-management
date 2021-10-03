@@ -47,9 +47,11 @@ antara lain :
 
 >> Helpdesk <<
 	* Cari tagihan
+		- Kirim ulang notifikasi pembbayaran ke merchant
+		- Cek status tagihan di payment provider
+		
 	* Cari pembayaran
-	* Kirim ulang notifikasi pembbayaran ke merchant
-	* Cek status tagihan di payment provider
+	
 	
 >> Developer
 	* Membuat VA dari invoice
@@ -266,3 +268,34 @@ docker run --rm       --name invoice-db       -e POSTGRES_DB=invoicedb       -e 
 
         // Contoh Implementasi topdown programming (coding dulu, trus automatis dibuatin method implementasinya sama 
         // editor)
+        
+        
+        
+###### PROSES BISNIS GANTI PASSWORD ######
+
+	* Inputan dari User
+		- Password Lama
+		- Password Baru
+		- Konfirmasi password baru
+	
+	* Proses
+		1. Terima password Lama
+		2. hash input password lama
+		3. compare dengan hash DB
+		4. compare password baru dengan konfirmasi
+		5. hash password baru
+		6. update DB
+	
+	
+##### PROSES BISNIS LUPA PASSWORD #####
+
+	* Inputan dari user
+		- email
+		
+	* Proses
+		1. Cari email di DB
+			- Jika email yang diinput tidak ditemukan, JANGAN DIINFORMASIKAN KE USER !!!
+		2. instruksikan cek email
+		3. generate kode unik (UUID / SecureRandom)
+		4. insert ke tabel reser password
+		5. kirim link reset ke email ( https://app.com/resetpassword)
