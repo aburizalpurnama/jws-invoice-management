@@ -38,6 +38,17 @@ create table s_roles_permissions (
     foreign key (id_permission) references s_permissions (id)
 );
 
+CREATE TABLE `reset_password` (
+  `id` varchar(255) NOT NULL,
+  `created` datetime(6) NOT NULL,
+  `expired` datetime(6) NOT NULL,
+  `unique_code` varchar(255) NOT NULL,
+  `id_user` varchar(255) NOT NULL,
+  PRIMARY KEY (`id`),
+  KEY `FKo30jfts6wuxfcn15onlvpyych` (`id_user`),
+  CONSTRAINT `FKo30jfts6wuxfcn15onlvpyych` FOREIGN KEY (`id_user`) REFERENCES `s_users` (`id`)
+);
+
 CREATE TABLE oauth2_registered_client (
     id varchar(100) NOT NULL,
     client_id varchar(100) NOT NULL,

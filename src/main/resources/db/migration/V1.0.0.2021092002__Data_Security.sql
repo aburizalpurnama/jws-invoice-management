@@ -4,6 +4,9 @@ values ('r001', 'staff');
 insert into s_roles (id, name)
 values ('r002', 'manager');
 
+insert into s_roles (id, name)
+values ('role_new_user', 'new_user');
+
 insert into s_users (id, username, active, id_role)
 values ('u001', 'user001', true, 'r001');
 
