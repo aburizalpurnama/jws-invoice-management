@@ -38,7 +38,6 @@ public class UserController {
 
         if(errors.hasErrors()){
             log.debug("Error : {}", errors.toString());
-            return "/register/form";
         }
 
         log.debug("Name : {}", registerFormDto.getName());
@@ -46,10 +45,11 @@ public class UserController {
         log.debug("Phone Number : {}", registerFormDto.getPhone());
 
 
-        String uniqueCode = userService.register(registerFormDto);
+        userService.register(registerFormDto);
 
         status.setComplete();
-        return "redirect:/register/verify/email?code=" + uniqueCode ;
+
+        return "redirect:/register/success";
     }
 
     @GetMapping("/register/success")
@@ -58,9 +58,19 @@ public class UserController {
     }
 
     @GetMapping("/register/verify/email")
-    public String verifiyEmail(@RequestParam(name = "code") String uniqueCode) throws ResetPasswordInvalidException {
-        userService.verifyEmail(uniqueCode);
+    public String verifiyEmail(@RequestParam(name = "code") String uniqueCode) {
+        try {
+            userService.verifyEmail(uniqueCode);
+        } catch (ResetPasswordInvalidException e) {
+            e.printStackTrace();
+            return "redirect:/register/failed";
+        }
         return "redirect:/password/reset?code="+uniqueCode;
+    }
+
+    @GetMapping("/register/failed")
+    public void verifyEmailFailed(){
+
     }
 
     @GetMapping("/password/reset")

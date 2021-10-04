@@ -1,5 +1,7 @@
 package com.rizalpurnama.service;
 
+import com.github.mustachejava.Mustache;
+import com.github.mustachejava.MustacheFactory;
 import com.rizalpurnama.dao.ResetPasswordDao;
 import com.rizalpurnama.dao.UserDao;
 import com.rizalpurnama.dao.UserPasswordDao;
@@ -11,11 +13,16 @@ import com.rizalpurnama.entity.UserPassword;
 import com.rizalpurnama.exception.ResetPasswordInvalidException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
+import java.io.StringWriter;
 import java.time.LocalDateTime;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -25,12 +32,20 @@ public class UserService {
 
     private final static String ROLE_ID_NEW_USER = "role_new_user";
 
+    @Value("${gmail.account.username}")
+    private String emailSender;
+
+    @Value("${email.subject.register}")
+    private String emailSubject;
+
     @Autowired private ResetPasswordDao resetPasswordDao;
     @Autowired private UserDao userDao;
     @Autowired private PasswordEncoder passwordEncoder;
     @Autowired private UserPasswordDao userPasswordDao;
+    @Autowired private GmailApiService gmailApiService;
+    @Autowired private MustacheFactory mustacheFactory;
 
-    public String register(RegisterFormDto data){
+    public void register(RegisterFormDto data){
         // insert ke tabel user dengan role staff (nanti diganti)
         User newUser = new User();
         newUser.setUsername(data.getEmail());
@@ -47,8 +62,18 @@ public class UserService {
         ResetPassword rp = new ResetPassword();
         rp.setUser(newUser);
         resetPasswordDao.save(rp);
-        return rp.getUniqueCode();
+
         // Kirim email ke user baru dengan link untuk reset password
+        String uriVerificationEmail = buildUriEmailVerification(rp);
+        log.debug("URI verification email {}", uriVerificationEmail);
+
+        String emailContent = generateRegistrationEmailContent(newUser, uriVerificationEmail);
+        log.debug("Registration email content : {}", emailContent);
+
+        gmailApiService.kirimEmail(emailSender,
+                newUser.getUsername(),
+                emailSubject,
+                emailContent);
     }
 
     public void setPassword(String newPassword){
@@ -107,6 +132,25 @@ public class UserService {
             // link : https://url-server/password/reset?code=resetPassword.getUniqueCode()
         }
 
-        // jika user tidak ada, dibiarkan saja tanpa memberi pemberitahuan apapun
+// jika user tidak ada, dibiarkan saja tanpa memberi pemberitahuan apapun
+    }
+
+    private String generateRegistrationEmailContent(User newUser, String uriVerificationEmail) {
+        Mustache templateEmail = mustacheFactory.compile("templates/email/registrasi.html");
+        Map<String, String> mustacheData = new HashMap<>();
+        mustacheData.put("username", newUser.getUsername());
+        mustacheData.put("uriVerifikasi", uriVerificationEmail);
+
+        StringWriter content = new StringWriter();
+        templateEmail.execute(content, mustacheData);
+        return content.toString();
+    }
+
+    private String buildUriEmailVerification(ResetPassword rp) {
+        String uriVerificationEmail = ServletUriComponentsBuilder.fromCurrentContextPath()
+                .path("/register/verify/email")
+                .queryParam("code", rp.getUniqueCode())
+                .build().toString();
+        return uriVerificationEmail;
     }
 }

@@ -1,5 +1,7 @@
 package com.rizalpurnama;
 
+import com.github.mustachejava.DefaultMustacheFactory;
+import com.github.mustachejava.MustacheFactory;
 import nz.net.ultraq.thymeleaf.LayoutDialect;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -22,6 +24,11 @@ public class JwsInvoiceManagementApplication {
 	@Bean
 	public SpringDataDialect springDataDialect() {
 		return new SpringDataDialect();
+	}
+
+	@Bean
+	public MustacheFactory mustacheFactory(){
+		return new DefaultMustacheFactory();
 	}
 
 }
