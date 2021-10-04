@@ -102,4 +102,20 @@ public class UserController {
 
     }
 
+    @GetMapping("/password/forgot")
+    public void displayForgotPassword(){
+
+    }
+
+    @PostMapping("/password/forgot")
+    public String proccessForgotPassword(@RequestParam String email){
+        userService.forgotPassword(email);
+        return "redirect:sent";
+    }
+
+    @GetMapping("/password/sent")
+    public void successForgotPassword(){
+
+    }
+
 }

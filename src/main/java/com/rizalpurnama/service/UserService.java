@@ -46,7 +46,6 @@ public class UserService {
         // insert ke tabel reset password
         ResetPassword rp = new ResetPassword();
         rp.setUser(newUser);
-        rp.setUniqueCode(UUID.randomUUID().toString());
         resetPasswordDao.save(rp);
         return rp.getUniqueCode();
         // Kirim email ke user baru dengan link untuk reset password
@@ -71,8 +70,11 @@ public class UserService {
         if (LocalDateTime.now().isAfter(rp.getExpired())){
             throw new ResetPasswordInvalidException("Unique code " + uniqueCode + "sudah expired");
         }
+
         log.info("verifiyResetPasswordLink() : id user {}", rp.getUser().getId());
-        return rp.getUser();
+        User user = rp.getUser();
+        resetPasswordDao.deleteByUser(user);
+        return user;
     }
 
     public void setNewPassword(User user, String password) {
@@ -92,5 +94,19 @@ public class UserService {
         userPasswordDao.save(userPassword);
         log.info("setNewPassword() : berhasil menyimpan user password ["+user.getId()+","+newPassword+"]");
 
+    }
+
+    public void forgotPassword(String email) {
+        Optional<User> optUser = userDao.findByUsername(email);
+        if (optUser.isPresent()){
+            userPasswordDao.deleteByUser(optUser.get());
+            ResetPassword resetPassword = new ResetPassword();
+            resetPassword.setUser(optUser.get());
+            resetPasswordDao.save(resetPassword);
+            // TODO: 04/10/21 : Kirim reset password link ke email
+            // link : https://url-server/password/reset?code=resetPassword.getUniqueCode()
+        }
+
+        // jika user tidak ada, dibiarkan saja tanpa memberi pemberitahuan apapun
     }
 }

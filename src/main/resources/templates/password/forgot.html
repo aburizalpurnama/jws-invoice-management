@@ -49,35 +49,23 @@
 <body class="text-center">
 
 <main class="form-signin">
-  <div th:if="${user}">
-    <form th:action="@{/password/reset}" method="post" >
-      <input type="hidden" name="user" th:value="${user.id}">
-      <img class="mb-4" src="/img/password.svg" alt="" width="95" height="95">
-      <h1 class="h3 mb-3 fw-normal">Reset Password</h1>
+    <form th:action="@{/password/forgot}" method="post" >
+      <img class="mb-4" src="/img/forgot.svg" alt="" width="95" height="95">
+      <h1 class="h3 mb-3 fw-normal">Forgot Password</h1>
       <div class="form-floating">
-        <input type="password"
-               name="password"
+        <input type="email"
+               name="email"
                class="form-control"
                id="floatingName"
-               placeholder="Password">
-        <label for="floatingName">Password</label>
+               placeholder="Email">
+        <label for="floatingName">Email</label>
       </div>
-      <div class="form-floating last mb-3">
-        <input type="password"
-               name="confirm_password"
-               class="form-control"
-               id="floatingPhone"
-               placeholder="Confirm Password">
-        <label for="floatingPhone">Confirm Password</label>
+      <div class="d-flex mb-5 align-items-center">
+        <span class="caption">Back to <a th:href="@{/login}">Login</a></span>
       </div>
       <button class="w-100 btn btn-lg btn-primary" type="submit">Done</button>
       <p class="mt-5 mb-3 text-muted">&copy; 2017–2021</p>
     </form>
-  </div>
-  <div th:unless="${user}">
-    <h3>Link reset password tidak valid.</h3>
-    <p>Silahkan klik <a th:href="@{/login}">login </a> untuk mengganti password</p>
-  </div>
 </main>
 </body>
 </html>

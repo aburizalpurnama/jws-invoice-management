@@ -7,4 +7,6 @@ import org.springframework.data.repository.CrudRepository;
 public interface UserPasswordDao extends CrudRepository<UserPassword, String> {
 
     UserPassword findByUser(User user);
+
+    void deleteByUser(User user);
 }

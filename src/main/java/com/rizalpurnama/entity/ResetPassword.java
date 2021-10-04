@@ -7,6 +7,7 @@ import javax.persistence.*;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 import java.time.LocalDateTime;
+import java.util.UUID;
 
 @Data @Entity
 @Table(name = "reset_password")
@@ -30,5 +31,5 @@ public class ResetPassword {
     private User user;
 
     @NotNull @NotEmpty
-    private String uniqueCode;
+    private String uniqueCode = UUID.randomUUID().toString();
 }
