@@ -299,3 +299,35 @@ docker run --rm       --name invoice-db       -e POSTGRES_DB=invoicedb       -e 
 		3. generate kode unik (UUID / SecureRandom)
 		4. insert ke tabel reser password
 		5. kirim link reset ke email ( https://app.com/resetpassword)
+
+##### PERINTAH SQL UNTUK MENGURAI DATA WILAYAH ########
+
+## Sql to get provinsi
+select kode as id, kode as code, nama as name from wilayah_2020 where length(kode)=2;
+
+## Sql to insert provinsi
+insert into provinsi(id, code, name)
+select kode, kode, nama from wilayah_2020 where length(kode) = 2;
+
+## Sql to get kota_kabupaten
+select kode as id, kode, nama from wilayah_2020 where length(kode)=5;
+
+## Sql to insert kota_kabupaten
+insert into kota_kabupaten(id, id_provinsi, code, name)
+select kode, substring(kode, 1, 2), kode, nama from wilayah_2020 where length(kode) = 5;
+
+##sql to get kecamatan
+select kode as id, substring(kode, 1, 5) as id_kota_kab, kode as code, nama as name from wilayah_2020 where length(kode)=8;
+
+##sql insert kecamatan
+insert into kecamatan(id, id_kota_kab, code, name)
+select kode, substring(kode, 1, 5), kode, nama from wilayah_2020 where length(kode) = 8;
+
+##sql insert kelurahan
+insert into kelurahan(id, id_kecamatan, code, name)
+select kode, substring(kode, 1, 8), kode, nama from wilayah_2020 where length(kode) = 13;
+
+##### GMAIL API CREDENTIALS ########
+
+gmail API client id : 413833577093-g90fv48b3964kns7p5nv60ocad72cnvo.apps.googleusercontent.com
+gmail API client secret : 9V6r9xZLQGBUa9AAzIp630oL

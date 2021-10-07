@@ -4,8 +4,8 @@
       xmlns:layout="http://www.ultaq.net.nz/thymeleaf/layout"
       layout:decorate="~{layout.html}" xmlns:sd="http://www.w3.org/1999/xhtml">
 <head>
-    <meta charset="UTF-8">
-    <title>Merchant Info Form</title>
+    <meta charset="utf-8">
+    <title>Merchat Info Form</title>
 </head>
 <body>
 <section layout:fragment="content">
@@ -13,11 +13,98 @@
     <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
         <h1 class="h2">Merchant Info</h1>
     </div>
-
-    <form th:action="@{/merchant/info/form}" method="post">
-        <input type="submit" value="Save">
-    </form>
-
+    <div class="col-md-8 order-md-1">
+        <form class="needs-validation" novalidate>
+            <div class="mb-3">
+                <label>Nama</label>
+                <input type="text"
+                       class="form-control"
+                       id="name"
+                       placeholder="Nama"
+                       aria-describedby="validationNameFeedback" required>
+            </div>
+            <div class="mb-3">
+                <label>Email</label>
+                <input type="email"
+                       class="form-control"
+                       id="email"
+                       placeholder="Email"
+                       aria-describedby="validationNameFeedback" required>
+            </div>
+            <div class="mb-3">
+                <label>No. Telp</label>
+                <input type="number"
+                       class="form-control"
+                       id="phone"
+                       placeholder="No. Telp"
+                       aria-describedby="validationNameFeedback" required>
+            </div>
+            <div class="mb-3">
+                <label>Call Back Url</label>
+                <input type="text"
+                       class="form-control"
+                       id="url"
+                       placeholder="Call Back Url"
+                       aria-describedby="validationNameFeedback" required>
+            </div>
+            <div class="mb-3">
+                <label>Logo</label>
+                <input type="file" class="form-control" required>
+            </div>
+            <div class="mb-3">
+                <label>Alamat Lengkap</label>
+                <input type="text"
+                       class="form-control"
+                       id="alamat"
+                       placeholder="Alamat Lengkap"
+                       aria-describedby="validationNameFeedback" required>
+            </div>
+            <div class="mb-3">
+                <label>Provinsi</label>
+                <select class="form-select" aria-label="Default select sample">
+                    <option>Pilih Provinsi</option>
+                    <option th:each="p : ${provinsiList}"
+                            th:text="${p.name}"
+                            th:value="${p.id}"
+                            th:selected="${provinsi != null && (p.id == provinsi.id)}">Pilih Provinsi</option>
+                </select>
+            </div>
+            <div class="mb-3">
+                <label>Kota / Kabupaten</label>
+                <select class="form-select" aria-label="Default select sample" th:disabled="${provinsi == null}">
+                    <option >Pilih Kota / Kabupaten</option>
+                    <option th:if="${kotaKabupatenList}"
+                            th:each="kk : ${kotaKabupatenList}"
+                            th:text="${kk.name}"
+                            th:value="${kk.id}"
+                            th:selected="${kotaKabupaten != null && (kk.id == kotaKabupaten.id)}">Pilih Kokab</option>
+                </select>
+            </div>
+            <div class="mb-3">
+                <label>Kecamatan</label>
+                <select class="form-select" aria-label="Default select sample" th:disabled="${kotaKabupaten == null}">
+                    <option>Pilih Kecamatan</option>
+                    <option th:if="${kecamatanList}"
+                            th:each="k : ${kecamatanList}"
+                            th:text="${k.name}"
+                            th:value="${k.id}"
+                            th:selected="${kecamatan != null && (k.id == kecamatan.id)}">Pilih Kecamatan</option>
+                </select>
+            </div>
+            <div class="mb-3">
+                <label>Kelurahan</label>
+                <select class="form-select" aria-label="Default select sample" th:disabled="kecamatan == null">
+                    <option>Pilih Kelurahan</option>
+                    <option th:if="${kelurahanList}"
+                            th:each="k : ${kelurahanList}"
+                            th:text="${k.name}"
+                            th:value="${k.id}"
+                            th:selected="${kelurahan != null && (k.id == kelurahan.id)}">Pilih Kelurahan</option>
+                </select>
+            </div>
+            <input type="submit" value="Save">
+        </form >
+    </div>
 </section>
 </body>
 </html>
